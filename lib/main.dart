@@ -18,7 +18,6 @@ class _ToDoListState extends State<ToDoList> {
       textStyle: const TextStyle(fontSize: 20), primary: Colors.red);
 
   Future<void> _displayTextInputDialog(BuildContext context) async {
-    print("Loading Dialog");
     return showDialog(
         context: context,
         builder: (context) {
@@ -86,11 +85,9 @@ class _ToDoListState extends State<ToDoList> {
 
       items.remove(item);
       if (!completed) {
-        print("Completing");
         _itemSet.add(item);
         items.add(item);
       } else {
-        print("Making Undone");
         _itemSet.remove(item);
         items.insert(0, item);
       }
@@ -99,14 +96,12 @@ class _ToDoListState extends State<ToDoList> {
 
   void _handleDeleteItem(Item item) {
     setState(() {
-      print("Deleting item");
       items.remove(item);
     });
   }
 
   void _handleNewItem(String itemText) {
     setState(() {
-      print("Adding new item");
       Item item = Item(name: itemText);
       items.insert(0, item);
       _inputController.clear();
