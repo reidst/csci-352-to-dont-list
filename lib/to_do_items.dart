@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 
-class MyTimerObject {
-  MyTimerObject({required this.lifetime});
+class Timer {
+  Timer({required this.lifetime});
 
   final int lifetime;
   final stopwatch = Stopwatch();
 
+  Duration getTimeLeft() {
+    return Duration(seconds: lifetime) - stopwatch.elapsed;
+  }
+
   String foo() {
-    String a = (Duration(seconds: lifetime) - stopwatch.elapsed)
+    String a = getTimeLeft() //
       .toString()
       .substring(2);
     return a.substring(0, a.length - 3);
@@ -37,7 +41,7 @@ class ToDoListItem extends StatelessWidget {
       : super(key: ObjectKey(item));
 
   final Item item;
-  final MyTimerObject timer;
+  final Timer timer;
   final bool completed;
   final ToDoListChangedCallback onListChanged;
   final ToDoListRemovedCallback onDeleteItem;
