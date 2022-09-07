@@ -4,17 +4,23 @@ class Timer {
   Timer({required this.lifetime});
 
   final int lifetime;
-  final stopwatch = Stopwatch();
+  final _stopwatch = Stopwatch();
 
   Duration getTimeLeft() {
-    return Duration(seconds: lifetime) - stopwatch.elapsed;
+    return Duration(seconds: lifetime) - _stopwatch.elapsed;
+  }
+
+  void start() {
+    _stopwatch.start();
+  }
+
+  void stop() {
+    _stopwatch.stop();
   }
 
   String foo() {
-    String a = getTimeLeft() //
-      .toString()
-      .substring(2);
-    return a.substring(0, a.length - 3);
+    String a = getTimeLeft().toString();
+    return a.substring(2, a.length - 3);
   }
 }
 
