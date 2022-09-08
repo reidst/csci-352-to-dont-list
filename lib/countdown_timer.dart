@@ -32,6 +32,8 @@ class CountdownTimer {
     _stopwatch.stop();
   }
 
+  bool get isPaused => !_stopwatch.isRunning;
+
   @override
   String toString() {
     String a = (isDead
@@ -43,21 +45,35 @@ class CountdownTimer {
 }
 
 class TimerWidget extends StatefulWidget {
-  const TimerWidget({Key? key, required this.lifetime, required this.onTimerFinish});
+  const TimerWidget({
+    required this.description, 
+    required this.lifetime, 
+    required this.onTimerFinish
+  });
 
+  final String description;
   final int lifetime;
   final TimerFinishCallback onTimerFinish;
 
   @override
-  State<TimerWidget> createState() => _TimerWidgetState(lifetime: lifetime, onTimerFinish: onTimerFinish);
+  State<TimerWidget> createState() => _TimerWidgetState(
+    description: description, 
+    lifetime: lifetime, 
+    onTimerFinish: onTimerFinish
+  );
 }
 
 class _TimerWidgetState extends State<TimerWidget> {
 
-  _TimerWidgetState({required int lifetime, required TimerFinishCallback onTimerFinish}) {
+  _TimerWidgetState({
+    required this.description, 
+    required int lifetime, 
+    required TimerFinishCallback onTimerFinish
+  }) {
     _timer = CountdownTimer(lifetime: lifetime, onTimerFinish: onTimerFinish);
   }
 
+  String description;
   late CountdownTimer _timer;
   Timer? _updateTimer;
 
@@ -78,10 +94,13 @@ class _TimerWidgetState extends State<TimerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: toggle, 
-      child: Text(_timer.toString()),
-      
+    return ListTile(
+      onTap: toggle,
+      onLongPress: _timer.isPaused
+        ? _timer.onTimerFinish
+        : null,
+      leading: Text(description),
+      trailing: Text(_timer.toString()),
     );
   }
 }
@@ -89,11 +108,13 @@ class _TimerWidgetState extends State<TimerWidget> {
 void main() {
   runApp(MaterialApp(
     title: 'Timer Test',
-    home: Center(
-      child: TimerWidget(
-        key: const Key('myTimerWidget'),
-        lifetime: 3, 
-        onTimerFinish: () => print('Timer finished!')
+    home: Scaffold(
+      body: Center(
+        child: TimerWidget(
+          description: 'my timer',
+          lifetime: 3, 
+          onTimerFinish: () => print('Timer finished!')
+        ),
       ),
     )
   ));
