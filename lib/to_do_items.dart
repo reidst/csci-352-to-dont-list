@@ -1,29 +1,5 @@
 import 'package:flutter/material.dart';
 
-class Timer {
-  Timer({required this.lifetime});
-
-  final int lifetime;
-  final _stopwatch = Stopwatch();
-
-  Duration getTimeLeft() {
-    return Duration(seconds: lifetime) - _stopwatch.elapsed;
-  }
-
-  void start() {
-    _stopwatch.start();
-  }
-
-  void stop() {
-    _stopwatch.stop();
-  }
-
-  String foo() {
-    String a = getTimeLeft().toString();
-    return a.substring(2, a.length - 3);
-  }
-}
-
 class Item {
   const Item({required this.name});
 
@@ -40,14 +16,12 @@ typedef ToDoListRemovedCallback = Function(Item item);
 class ToDoListItem extends StatelessWidget {
   ToDoListItem(
       {required this.item,
-      required this.timer,
       required this.completed,
       required this.onListChanged,
       required this.onDeleteItem})
       : super(key: ObjectKey(item));
 
   final Item item;
-  final Timer timer;
   final bool completed;
   final ToDoListChangedCallback onListChanged;
   final ToDoListRemovedCallback onDeleteItem;
@@ -89,10 +63,6 @@ class ToDoListItem extends StatelessWidget {
       ),
       title: Text(
         item.name,
-        style: _getTextStyle(context),
-      ),
-      trailing: Text(
-        timer.foo(), 
         style: _getTextStyle(context),
       ),
     );

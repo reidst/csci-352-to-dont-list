@@ -119,7 +119,6 @@ class _ToDoListState extends State<ToDoList> {
           children: items.map((item) {
             return ToDoListItem(
               item: item,
-              timer: Timer(lifetime: 10),
               completed: _itemSet.contains(item),
               onListChanged: _handleListChanged,
               onDeleteItem: _handleDeleteItem,
