@@ -22,7 +22,7 @@ class _ToDoListState extends State<ToDoList> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Item To Add'),
+            title: const Text('Timer To Add'),
             content: TextField(
               onChanged: (value) {
                 setState(() {
@@ -31,19 +31,9 @@ class _ToDoListState extends State<ToDoList> {
               },
               controller: _inputController,
               decoration:
-                  const InputDecoration(hintText: "type something here"),
+                  const InputDecoration(hintText: "timer name"),
             ),
             actions: <Widget>[
-              ElevatedButton(
-                key: const Key("CancelButton"),
-                style: noStyle,
-                child: const Text('Cancel'),
-                onPressed: () {
-                  setState(() {
-                    Navigator.pop(context);
-                  });
-                },
-              ),
 
               // https://stackoverflow.com/questions/52468987/how-to-turn-disabled-button-into-enabled-button-depending-on-conditions
               ValueListenableBuilder<TextEditingValue>(
@@ -64,6 +54,16 @@ class _ToDoListState extends State<ToDoList> {
                   );
                 },
               ),
+              ElevatedButton(
+                key: const Key("CancelButton"),
+                style: noStyle,
+                child: const Text('Cancel'),
+                onPressed: () {
+                  setState(() {
+                    Navigator.pop(context);
+                  });
+                },
+              ),
             ],
           );
         });
@@ -72,7 +72,7 @@ class _ToDoListState extends State<ToDoList> {
   String valueText = "";
 
   late List<TimerWidget> items = [TimerWidget(
-    description: "add more todos",
+    description: "Create your own timers!",
     lifetime: 10,
     onTimerFinish: _handleDeleteItem,
   )];
@@ -99,15 +99,12 @@ class _ToDoListState extends State<ToDoList> {
   }
   */
   void _handleDeleteItem() {
-    print('before: ${items.toString()}');
     setState(() {
       items.removeWhere((timer) => timer.isFinished);
     });
-    print('after: ${items.toString()}');
   }
 
   void _handleNewItem(String itemText) {
-    print('before: ${items.toString()}');
     setState(() {
       items.add(TimerWidget(
         description: itemText, 
@@ -115,14 +112,14 @@ class _ToDoListState extends State<ToDoList> {
         onTimerFinish: _handleDeleteItem
       ));
     });
-    print('after: ${items.toString()}');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.brown[100],
         appBar: AppBar(
-          title: const Text('To Time List'),
+          title: const Center(child: Text('To Time List')),
         ),
         // ListView.builder solution from https://www.geeksforgeeks.org/listview-builder-in-flutter/
         body: ListView.builder(
@@ -140,8 +137,11 @@ class _ToDoListState extends State<ToDoList> {
 }
 
 void main() {
-  runApp(const MaterialApp(
-    title: 'To Do List',
-    home: ToDoList(),
+  runApp(MaterialApp(
+    title: 'To Time List',
+    theme: ThemeData(
+      primarySwatch: Colors.brown,
+    ),
+    home: const ToDoList(),
   ));
 }
