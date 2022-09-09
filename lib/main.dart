@@ -1,5 +1,6 @@
 // Started with https://docs.flutter.dev/development/ui/widgets-intro
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:to_dont_list/countdown_timer.dart';
 
 class ToDoList extends StatefulWidget {
@@ -11,33 +12,49 @@ class ToDoList extends StatefulWidget {
 
 class _ToDoListState extends State<ToDoList> {
   // Dialog with text from https://www.appsdeveloperblog.com/alert-dialog-with-a-text-field-in-flutter/
-  final TextEditingController _inputController = TextEditingController();
+  final TextEditingController _nameInputController = TextEditingController();
+  final TextEditingController _timeInputController = TextEditingController();
   final ButtonStyle yesStyle = ElevatedButton.styleFrom(
       textStyle: const TextStyle(fontSize: 20), primary: Colors.green);
   final ButtonStyle noStyle = ElevatedButton.styleFrom(
       textStyle: const TextStyle(fontSize: 20), primary: Colors.red);
 
   Future<void> _displayTextInputDialog(BuildContext context) async {
+    timerNameInput = '';
+    timerLifetimeInput = 10;
     return showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
             title: const Text('Timer To Add'),
-            content: TextField(
-              onChanged: (value) {
-                setState(() {
-                  valueText = value;
-                });
-              },
-              controller: _inputController,
-              decoration:
-                  const InputDecoration(hintText: "timer name"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  onChanged: (value) {
+                    setState(() { timerNameInput = value; });
+                  },
+                  controller: _nameInputController,
+                  decoration: const InputDecoration(hintText: 'timer name'),
+                ),
+                TextField(
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  onChanged: (value) {
+                    setState(() {
+                      timerLifetimeInput = int.tryParse(value) ?? timerLifetimeInput;
+                    });
+                  },
+                  controller: _timeInputController,
+                  decoration: const InputDecoration(hintText: 'time length'),
+                ),
+              ],
             ),
             actions: <Widget>[
 
               // https://stackoverflow.com/questions/52468987/how-to-turn-disabled-button-into-enabled-button-depending-on-conditions
               ValueListenableBuilder<TextEditingValue>(
-                valueListenable: _inputController,
+                valueListenable: _nameInputController,
                 builder: (context, value, child) {
                   return ElevatedButton(
                     key: const Key("OKButton"),
@@ -45,7 +62,7 @@ class _ToDoListState extends State<ToDoList> {
                     onPressed: value.text.isNotEmpty
                         ? () {
                             setState(() {
-                              _handleNewItem(valueText);
+                              _handleNewItem(timerNameInput, timerLifetimeInput);
                               Navigator.pop(context);
                             });
                           }
@@ -69,46 +86,26 @@ class _ToDoListState extends State<ToDoList> {
         });
   }
 
-  String valueText = "";
+  String timerNameInput = "";
+  int timerLifetimeInput = 0;
 
   late List<TimerWidget> items = [TimerWidget(
     description: "Create your own timers!",
     lifetime: 10,
     onTimerFinish: _handleDeleteItem,
   )];
-/*
-  final _itemSet = <Item>{};
 
-  void _handleListChanged(Item item, bool completed) {
-    setState(() {
-      // When a user changes what's in the list, you need
-      // to change _itemSet inside a setState call to
-      // trigger a rebuild.
-      // The framework then calls build, below,
-      // which updates the visual appearance of the app.
-
-      items.remove(item);
-      if (!completed) {
-        _itemSet.add(item);
-        items.add(item);
-      } else {
-        _itemSet.remove(item);
-        items.insert(0, item);
-      }
-    });
-  }
-  */
   void _handleDeleteItem() {
     setState(() {
       items.removeWhere((timer) => timer.isFinished);
     });
   }
 
-  void _handleNewItem(String itemText) {
+  void _handleNewItem(String itemText, int itemLifetime) {
     setState(() {
       items.add(TimerWidget(
         description: itemText, 
-        lifetime: 3, 
+        lifetime: itemLifetime, 
         onTimerFinish: _handleDeleteItem
       ));
     });
