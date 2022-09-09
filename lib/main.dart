@@ -1,6 +1,6 @@
 // Started with https://docs.flutter.dev/development/ui/widgets-intro
 import 'package:flutter/material.dart';
-import 'package:to_dont_list/to_do_items.dart';
+import 'package:to_dont_list/countdown_timer.dart';
 
 class ToDoList extends StatefulWidget {
   const ToDoList({super.key});
@@ -71,8 +71,12 @@ class _ToDoListState extends State<ToDoList> {
 
   String valueText = "";
 
-  final List<Item> items = [const Item(name: "add more todos")];
-
+  late List<TimerWidget> items = [TimerWidget(
+    description: "add more todos",
+    lifetime: 10,
+    onTimerFinish: _handleDeleteItem,
+  )];
+/*
   final _itemSet = <Item>{};
 
   void _handleListChanged(Item item, bool completed) {
@@ -93,19 +97,25 @@ class _ToDoListState extends State<ToDoList> {
       }
     });
   }
-
-  void _handleDeleteItem(Item item) {
+  */
+  void _handleDeleteItem() {
+    print('before: ${items.toString()}');
     setState(() {
-      items.remove(item);
+      items.removeWhere((timer) => timer.isFinished);
     });
+    print('after: ${items.toString()}');
   }
 
   void _handleNewItem(String itemText) {
+    print('before: ${items.toString()}');
     setState(() {
-      Item item = Item(name: itemText);
-      items.insert(0, item);
-      _inputController.clear();
+      items.add(TimerWidget(
+        description: itemText, 
+        lifetime: 3, 
+        onTimerFinish: _handleDeleteItem
+      ));
     });
+    print('after: ${items.toString()}');
   }
 
   @override
@@ -114,16 +124,12 @@ class _ToDoListState extends State<ToDoList> {
         appBar: AppBar(
           title: const Text('To Time List'),
         ),
-        body: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          children: items.map((item) {
-            return ToDoListItem(
-              item: item,
-              completed: _itemSet.contains(item),
-              onListChanged: _handleListChanged,
-              onDeleteItem: _handleDeleteItem,
-            );
-          }).toList(),
+        // ListView.builder solution from https://www.geeksforgeeks.org/listview-builder-in-flutter/
+        body: ListView.builder(
+          itemCount: items.length,
+          itemBuilder: (BuildContext context, int index) {
+            return items[index];
+          },
         ),
         floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.add),

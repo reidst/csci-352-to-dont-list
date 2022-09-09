@@ -4,10 +4,15 @@ import 'package:flutter/material.dart';
 typedef TimerFinishCallback = Function();
 
 class CountdownTimer {
-  CountdownTimer({required this.lifetime, required this.onTimerFinish});
+  CountdownTimer({
+    required this.lifetime, 
+    required this.onTimerFinish, 
+    required this.widgetToMarkFinished
+  });
 
   final int lifetime;
   final TimerFinishCallback onTimerFinish;
+  final TimerWidget widgetToMarkFinished;
   final _stopwatch = Stopwatch();
   bool isDead = false;
   Timer? _timer;
@@ -23,6 +28,7 @@ class CountdownTimer {
     _timer = Timer(getTimeLeft(), () {
       stop();
       isDead = true;
+      widgetToMarkFinished.markFinished();
       onTimerFinish();
     });
   }
@@ -45,7 +51,8 @@ class CountdownTimer {
 }
 
 class TimerWidget extends StatefulWidget {
-  const TimerWidget({
+  TimerWidget({
+    super.key,
     required this.description, 
     required this.lifetime, 
     required this.onTimerFinish
@@ -54,12 +61,17 @@ class TimerWidget extends StatefulWidget {
   final String description;
   final int lifetime;
   final TimerFinishCallback onTimerFinish;
+  bool _isFinished = false;
+
+  bool get isFinished => _isFinished;
+  void markFinished() => _isFinished = true;
 
   @override
   State<TimerWidget> createState() => _TimerWidgetState(
     description: description, 
     lifetime: lifetime, 
-    onTimerFinish: onTimerFinish
+    onTimerFinish: onTimerFinish,
+    widgetToMarkFinished: this
   );
 }
 
@@ -68,12 +80,18 @@ class _TimerWidgetState extends State<TimerWidget> {
   _TimerWidgetState({
     required this.description, 
     required int lifetime, 
-    required TimerFinishCallback onTimerFinish
+    required TimerFinishCallback onTimerFinish,
+    required this.widgetToMarkFinished
   }) {
-    _timer = CountdownTimer(lifetime: lifetime, onTimerFinish: onTimerFinish);
+    _timer = CountdownTimer(
+      lifetime: lifetime, 
+      onTimerFinish: onTimerFinish, 
+      widgetToMarkFinished: widgetToMarkFinished
+    );
   }
 
   String description;
+  TimerWidget widgetToMarkFinished;
   late CountdownTimer _timer;
   Timer? _updateTimer;
 
@@ -82,7 +100,10 @@ class _TimerWidgetState extends State<TimerWidget> {
     if (_updateTimer == null) {
       _updateTimer = Timer.periodic(
         Duration.zero,
-        (Timer t) => setState(() {})
+        (Timer t) { widgetToMarkFinished.isFinished
+          ? null
+          : setState(() {});
+        }
       );
       _timer.start();
     } else {
@@ -97,7 +118,10 @@ class _TimerWidgetState extends State<TimerWidget> {
     return ListTile(
       onTap: toggle,
       onLongPress: _timer.isPaused
-        ? _timer.onTimerFinish
+        ? () {
+          widgetToMarkFinished.markFinished();
+          _timer.onTimerFinish();
+        }
         : null,
       leading: Text(description),
       trailing: Text(_timer.toString()),
