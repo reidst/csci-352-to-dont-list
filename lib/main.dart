@@ -31,6 +31,7 @@ class _ToDoListState extends State<ToDoList> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
+                  key: const Key('timerNameInput'),
                   onChanged: (value) {
                     setState(() { timerNameInput = value; });
                   },
@@ -38,6 +39,7 @@ class _ToDoListState extends State<ToDoList> {
                   decoration: const InputDecoration(hintText: 'timer name'),
                 ),
                 TextField(
+                  key: const Key('timerLifetimeInput'),
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   onChanged: (value) {
