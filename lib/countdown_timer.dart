@@ -106,40 +106,41 @@ class _TimerWidgetState extends State<TimerWidget> {
         }
       );
       _timer.start();
-    } else {
+    } else { setState(() {
       _updateTimer?.cancel();
       _updateTimer = null;
       _timer.stop();
-    }
+    });}
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      onTap: toggle,
-      onLongPress: _timer.isPaused
-        ? () {
-          widgetToMarkFinished.markFinished();
-          _timer.onTimerFinish();
-        }
-        : null,
-      leading: Text(description),
-      trailing: Text(_timer.toString()),
+    return Card(
+      child: ListTile(
+        onTap: toggle,
+        onLongPress: _timer.isPaused
+          ? () {
+            widgetToMarkFinished.markFinished();
+            _timer.onTimerFinish();
+          }
+          : null,
+        leading: Icon(
+          _timer.isPaused
+            ? Icons.play_circle_fill_rounded
+            : Icons.pause_circle_filled_rounded,
+          color: _timer.isPaused
+            ? Theme.of(context).unselectedWidgetColor
+            : Theme.of(context).indicatorColor,
+        ),
+        title: Text(
+          description,
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+        trailing: Text(
+          _timer.toString(),
+          style: Theme.of(context).textTheme.headline6,
+        ),
+      )
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    title: 'Timer Test',
-    home: Scaffold(
-      body: Center(
-        child: TimerWidget(
-          description: 'my timer',
-          lifetime: 3, 
-          onTimerFinish: () => print('Timer finished!')
-        ),
-      ),
-    )
-  ));
 }
