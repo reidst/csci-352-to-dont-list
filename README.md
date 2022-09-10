@@ -1,22 +1,21 @@
-# To Don't List
+# To Time List
 
-A Flutter Demo project.
+A Flutter app for creating and using several timers at once!
 
-## Edit Me
+![example_image](images/multiple_timers_running.png)
 
-This is the file you should edit to describe your modified app.
+## Description
 
-A README.md is written using [Markdown](https://www.markdownguide.org/), a simple language for formatting text that can be rendered as a web page. This README.md information will be displayed on the GitHub main page for your repository. Here is a resource specifically for Markdown syntax and GitHub.
+To Time List is a unique kind of to-do list that keeps track of not just which things to do, but also how much time you have to do them. Although most modern smartphones come preloaded with a timer app, To Time List outshines them mechanically and aesthetically.
 
-* <https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax>
+## Instructions
 
-Now, with a text editor on your cloned repository, or by clicking on the edit icon ✏️ on the main github.com page for your forked repository, edit the README.md file in the root directory to provide details about your app’s functionality. Be sure to follow the guidelines of the GitHub documentation on what to include in your README.md file.
+1. On the app homepage, click the 'Add' icon in the bottom-right corner to open the 'Add Timer' page.
+2. To add a timer, give it a name and a duration, then click OK.
+    - **Note:** The duration is given in seconds and must be a whole number, but timers can be anywhere from 1 second to several days if desired!
 
-* <https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes>
+![adding_timers](images/adding_timers.png)
 
-The most important pieces to include right now are
+![multiple_timers](images/multiple_timers.png)
 
-* Who is the audience for this app
-* What the app does
-* Why the app is useful
-* Multiple Screenshots of your app
+3. The homepage will now include your new timer. To start or stop your timer, tap on it once. Timers are automatically removed once they finish counting, but if you wish to remove a timer before it finishes then long-tap it while it is paused.
