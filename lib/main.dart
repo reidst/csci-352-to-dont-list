@@ -20,13 +20,11 @@ class _ToDoListState extends State<ToDoList> {
       textStyle: const TextStyle(fontSize: 20), primary: Colors.red);
 
   Future<void> _displayTextInputDialog(BuildContext context) async {
-    timerNameInput = '';
-    timerLifetimeInput = 10;
     return showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Timer To Add'),
+            title: const Text('Add Timer'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -36,7 +34,7 @@ class _ToDoListState extends State<ToDoList> {
                     setState(() { timerNameInput = value; });
                   },
                   controller: _nameInputController,
-                  decoration: const InputDecoration(hintText: 'timer name'),
+                  decoration: const InputDecoration(hintText: 'Timer name'),
                 ),
                 TextField(
                   key: const Key('timerLifetimeInput'),
@@ -48,7 +46,7 @@ class _ToDoListState extends State<ToDoList> {
                     });
                   },
                   controller: _timeInputController,
-                  decoration: const InputDecoration(hintText: 'time length'),
+                  decoration: const InputDecoration(hintText: 'Duration (in seconds)'),
                 ),
               ],
             ),
@@ -89,7 +87,7 @@ class _ToDoListState extends State<ToDoList> {
   }
 
   String timerNameInput = "";
-  int timerLifetimeInput = 0;
+  int timerLifetimeInput = 10;
 
   late List<TimerWidget> items = [TimerWidget(
     description: "Create your own timers!",
