@@ -133,7 +133,10 @@ class _ToDoListState extends State<ToDoList> {
           actions: [
             Stack(
               children: [
-                IconButton(onPressed: () {}, icon: Icon(Icons.timer, size: 40)),
+                IconButton(
+                    key: Key("timer"),
+                    onPressed: () {},
+                    icon: Icon(Icons.timer, size: 40)),
                 Positioned(
                   bottom: 3,
                   left: 5,
@@ -144,6 +147,7 @@ class _ToDoListState extends State<ToDoList> {
                           shape: BoxShape.circle, color: Colors.brown),
                       child: Center(
                           child: Text(
+                        key: Key("counter"),
                         counter.toString(),
                         style: TextStyle(
                             fontSize: 12, fontWeight: FontWeight.bold),
