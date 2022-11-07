@@ -11,6 +11,7 @@ class ToDoList extends StatefulWidget {
 }
 
 class _ToDoListState extends State<ToDoList> {
+  int counter = 1;
   // Dialog with text from https://www.appsdeveloperblog.com/alert-dialog-with-a-text-field-in-flutter/
   final TextEditingController _nameInputController = TextEditingController();
   final TextEditingController _timeInputController = TextEditingController();
@@ -31,7 +32,9 @@ class _ToDoListState extends State<ToDoList> {
                 TextField(
                   key: const Key('timerNameInput'),
                   onChanged: (value) {
-                    setState(() { timerNameInput = value; });
+                    setState(() {
+                      timerNameInput = value;
+                    });
                   },
                   controller: _nameInputController,
                   decoration: const InputDecoration(hintText: 'Timer name'),
@@ -42,16 +45,17 @@ class _ToDoListState extends State<ToDoList> {
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   onChanged: (value) {
                     setState(() {
-                      timerLifetimeInput = int.tryParse(value) ?? timerLifetimeInput;
+                      timerLifetimeInput =
+                          int.tryParse(value) ?? timerLifetimeInput;
                     });
                   },
                   controller: _timeInputController,
-                  decoration: const InputDecoration(hintText: 'Duration (in seconds)'),
+                  decoration:
+                      const InputDecoration(hintText: 'Duration (in seconds)'),
                 ),
               ],
             ),
             actions: <Widget>[
-
               // https://stackoverflow.com/questions/52468987/how-to-turn-disabled-button-into-enabled-button-depending-on-conditions
               ValueListenableBuilder<TextEditingValue>(
                 valueListenable: _nameInputController,
@@ -62,7 +66,8 @@ class _ToDoListState extends State<ToDoList> {
                     onPressed: value.text.isNotEmpty
                         ? () {
                             setState(() {
-                              _handleNewItem(timerNameInput, timerLifetimeInput);
+                              _handleNewItem(
+                                  timerNameInput, timerLifetimeInput);
                               Navigator.pop(context);
                             });
                           }
@@ -89,24 +94,32 @@ class _ToDoListState extends State<ToDoList> {
   String timerNameInput = "";
   int timerLifetimeInput = 10;
 
-  late List<TimerWidget> items = [TimerWidget(
-    description: "Create your own timers!",
-    lifetime: 10,
-    onTimerFinish: _handleDeleteItem,
-  )];
+  late List<TimerWidget> items = [
+    TimerWidget(
+      description: "Create your own timers!",
+      lifetime: 10,
+      onTimerFinish: _handleDeleteItem,
+    )
+  ];
 
   void _handleDeleteItem() {
     setState(() {
       items.removeWhere((timer) => timer.isFinished);
+      if (counter == 0) {
+        counter = 0;
+      } else {
+        counter -= 1;
+      }
     });
   }
 
   void _handleNewItem(String itemText, int itemLifetime) {
     setState(() {
+      counter += 1;
       items.add(TimerWidget(
-        description: itemText, 
-        lifetime: itemLifetime, 
-        onTimerFinish: _handleDeleteItem
+        description: itemText,
+        lifetime: itemLifetime,
+        onTimerFinish: _handleDeleteItem,
       ));
     });
   }
@@ -117,6 +130,28 @@ class _ToDoListState extends State<ToDoList> {
         backgroundColor: Colors.brown[100],
         appBar: AppBar(
           title: const Center(child: Text('To Time List')),
+          actions: [
+            Stack(
+              children: [
+                IconButton(onPressed: () {}, icon: Icon(Icons.timer, size: 40)),
+                Positioned(
+                  bottom: 3,
+                  left: 5,
+                  child: Container(
+                      height: 22,
+                      width: 22,
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle, color: Colors.brown),
+                      child: Center(
+                          child: Text(
+                        counter.toString(),
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.bold),
+                      ))),
+                )
+              ],
+            )
+          ],
         ),
         // ListView.builder solution from https://www.geeksforgeeks.org/listview-builder-in-flutter/
         body: ListView.builder(
