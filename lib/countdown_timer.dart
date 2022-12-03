@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 typedef TimerFinishCallback = Function();
+typedef TimerEditCallback = Function(Timer timer);
 
 class CountdownTimer {
   CountdownTimer(
@@ -54,7 +55,7 @@ class TimerWidget extends StatefulWidget {
     required this.onTimerFinish,
   });
 
-  final String description;
+  String description;
   final int lifetime;
   final TimerFinishCallback onTimerFinish;
   bool _isFinished = false;
@@ -103,21 +104,69 @@ class _TimerWidgetState extends State<TimerWidget> {
     }
   }
 
+  void onEditItem(_TimerWidgetState tw, String newName) {
+    setState(() {
+      tw.description = newName;
+    });
+  }
+
+  final TextEditingController _nameInputController = TextEditingController();
+  final ButtonStyle yesStyle = ElevatedButton.styleFrom(
+      textStyle: const TextStyle(fontSize: 20), primary: Colors.green);
+  final ButtonStyle noStyle = ElevatedButton.styleFrom(
+      textStyle: const TextStyle(fontSize: 20), primary: Colors.red);
+
   @override
   Widget build(BuildContext context) {
     return Card(
         child: ListTile(
-      onTap: toggle,
+      onTap: () {
+        String timerNameInput = "";
+        showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('Edit Timer'),
+            content: TextField(
+              key: const Key('timerNameInput'),
+              onChanged: (value) {
+                setState(() {
+                  timerNameInput = value;
+                });
+              },
+              controller: _nameInputController,
+              decoration: const InputDecoration(hintText: 'Timer name'),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => {Navigator.pop(context)},
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => {
+                  onEditItem(this, timerNameInput),
+                  Navigator.pop(context),
+                  print('Current Name: $description')
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+        _nameInputController.clear();
+      },
       onLongPress: _timer.isPaused
           ? () {
               widgetToMarkFinished.markFinished();
               _timer.onTimerFinish();
             }
           : null,
-      leading: Icon(
-        _timer.isPaused
+      leading: IconButton(
+        icon: Icon(_timer.isPaused
             ? Icons.play_circle_fill_rounded
-            : Icons.pause_circle_filled_rounded,
+            : Icons.pause_circle_filled_rounded),
+        onPressed: () {
+          toggle();
+        },
         color: _timer.isPaused
             ? Theme.of(context).unselectedWidgetColor
             : Theme.of(context).indicatorColor,
